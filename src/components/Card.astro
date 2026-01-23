@@ -1,0 +1,22 @@
+---
+const { adresse, nbChambres, nbSdb, prix, nomMaison, imgUrl, surface } =
+    Astro.props;
+---
+
+<div
+    class="grid grid-cols-2 grid-rows-1 border border-black rounded-lg overflow-hidden shadow-lg mb-6 mr-20 ml-20"
+>
+    <img
+        src={Astro.props.imgUrl}
+        alt={Astro.props.nomMaison}
+        class="w-full h-60 object-cover"
+    />
+    <div class="p-6 bg-fuchsia-100">
+        <h2 class="text-xl font-bold mb-2">{Astro.props.nomMaison}</h2>
+        <p class="text-black mb-2">{adresse}</p>
+        <p class="text-black mb-2">{nbChambres} chambres</p>
+        <p class="text-black mb-2">{nbSdb} salles de bain</p>
+        <p class="text-black mb-2">{surface} m²</p>
+        <p class="text-green-600 font-semibold">{prix} €/mois</p>
+    </div>
+</div>
