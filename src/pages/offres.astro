@@ -21,7 +21,7 @@ const offres = await getOffres();
                     class="offre"
                     data-favori={offre.favori ? "true" : "false"}
                 >
-                    <Card nom_maison={offre.nom_maison} imgUrl={offre.Image} />
+                    <Card offre={offre} />
                 </div>
             ))
         }

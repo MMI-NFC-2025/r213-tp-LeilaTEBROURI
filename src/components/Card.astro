@@ -1,11 +1,12 @@
 ---
 import PbImage from "./PbImage.astro";
-const { nom_maison, imgUrl } = Astro.props;
+const offre = Astro.props.offre;
+console.log(offre);
 ---
 
 <div
     class="border border-black rounded-lg overflow-hidden shadow-lg mb-6 mr-20 ml-20 flex flex-col items-center bg-fuchsia-100 p-6"
 >
-    <PbImage record={Astro.props} imageField="imgUrl" />
-    <h2 class="text-xl font-bold mt-4">{nom_maison}</h2>
+    <PbImage record={offre} recordImage={offre.image[0]} />
+    <h2 class="text-xl font-bold mt-4">{offre.nom_maison}</h2>
 </div>

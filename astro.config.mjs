@@ -12,6 +12,14 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
-
+  image: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8090',
+      },
+    ],
+  },
   adapter: netlify()
 });

@@ -13,7 +13,6 @@ export async function getOffres() {
         return [];
     }
 }
-export async function getImageUrl(record, imageField) {
-    return db.files.getURL(record, record[imageField]);
+export async function getImageUrl(record, recordImage) {
+    return db.files.getURL(record, recordImage);
 }
-
