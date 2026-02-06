@@ -11,12 +11,20 @@ if (!offre) {
 ---
 
 <Layout titre={offre.nom_maison}>
-    <h1>{offre.nom_maison}</h1>
-    <ul>
-        <li>{offre.adresse}</li>
-        <li>{offre.prix} €</li>
-        <li>{offre.surface} m²</li>
-        <li>{offre.nombre_de_chambre} pièces</li>
-        <li>{offre.nombre_de_salle_de_bain} salles de bain</li>
-    </ul>
+    <div class="bg-fuchsia-100 rounded-lg p-6 mb-6 border border-black">
+        <h1>{offre.nom_maison}</h1>
+        <ul>
+            <li>{offre.adresse}</li>
+            <li>{offre.prix} €</li>
+            <li>{offre.surface} m²</li>
+            <li>{offre.nombre_de_chambre} pièces</li>
+            <li>{offre.nombre_de_salle_de_bain} salles de bain</li>
+        </ul>
+    </div>
+    <a
+        href="/offres"
+        class="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg mb-6 inline-block ml-6"
+    >
+        ← Retour aux offres
+    </a>
 </Layout>
