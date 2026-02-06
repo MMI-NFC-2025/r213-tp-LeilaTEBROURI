@@ -1,0 +1,38 @@
+---
+import "../../../styles/global.css";
+import Layout from "../../../layouts/Layout.astro";
+import Card from "../../../components/Card.astro";
+
+import { getOffres } from "../../../js/backend.mjs";
+
+const prix = Astro.params.prix!;
+const offres = (await getOffres()).filter((offre) => offre.prix < Number(prix));
+---
+
+<Layout titre={`Maisons < ${prix}€`}>
+    <h1>Maisons à moins de {prix}€</h1>
+    <p class="text-gray-600 mb-4">{offres.length} maison(s) trouvée(s)</p>
+
+    <a
+        href="/offres"
+        class="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg mb-6 inline-block"
+    >
+        ← Retour aux offres
+    </a>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+            offres.map((offre) => (
+                <div class="offre bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <Card offre={offre} />
+                </div>
+            ))
+        }
+    </div>
+</Layout>
+
+<style>
+    .offre {
+        border: 1px solid #e5e7eb;
+    }
+</style>

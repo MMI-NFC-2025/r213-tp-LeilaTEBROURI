@@ -9,16 +9,39 @@ const offres = await getOffres();
 
 <Layout titre="Offres">
     <h1>Offres</h1>
-    <button
-        id="favori-button"
-        class="bg-fuchsia-100 rounded-lg text-black p-2 border border-black mb-4 mt-4"
-        >Afficher les favoris</button
-    >
-    <div>
+
+    <div class="filters mb-6 flex flex-wrap gap-2">
+        <button
+            id="favori-button"
+            class="bg-fuchsia-100 hover:bg-fuchsia-200 rounded-lg text-black p-2 border border-black transition-colors"
+        >
+            Afficher les favoris
+        </button>
+        <a
+            href="/offres/surface/80"
+            class="bg-blue-100 hover:bg-blue-200 rounded-lg text-black p-2 border border-black transition-colors"
+        >
+            Maisons > 80m²
+        </a>
+        <a
+            href="/offres/prix/300000"
+            class="bg-green-100 hover:bg-green-200 rounded-lg text-black p-2 border border-black transition-colors"
+        >
+            Maisons &lt; 300k€
+        </a>
+        <a
+            href="/offres/prix/200000-400000"
+            class="bg-yellow-100 hover:bg-yellow-200 rounded-lg text-black p-2 border border-black transition-colors"
+        >
+            Maisons 200k-400k€
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
             offres.map((offre) => (
                 <div
-                    class="offre"
+                    class="offre bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                     data-favori={offre.favori ? "true" : "false"}
                 >
                     <Card offre={offre} />
@@ -27,6 +50,17 @@ const offres = await getOffres();
         }
     </div>
 </Layout>
+
+<style>
+    .offre {
+        border: 1px solid #e5e7eb;
+    }
+
+    .offre[data-favori="true"] {
+        border-color: #10b981;
+        background-color: #ecfdf5;
+    }
+</style>
 
 <script>
     //@ts-nocheck
