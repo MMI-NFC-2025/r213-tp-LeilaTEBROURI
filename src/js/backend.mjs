@@ -16,3 +16,14 @@ export async function getOffres() {
 export async function getImageUrl(record, recordImage) {
     return db.files.getURL(record, recordImage);
 }
+
+//backend.js
+export async function getOffre(id) {
+    try {
+        const data = await db.collection('Maison').getOne(id);
+        return data;
+    } catch (error) {
+        console.log('Une erreur est survenue en lisant la maison', error);
+        return null;
+    }
+}
