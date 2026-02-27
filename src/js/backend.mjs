@@ -13,6 +13,20 @@ export async function getOffres() {
         return [];
     }
 }
+
+export async function filterByPrix(minPrix, maxPrix) {
+    try {
+        const data = await db.collection('Maison').getFullList({
+            sort: '-created',
+            filter: `prix >= ${minPrix} && prix <= ${maxPrix}`,
+        });
+        return data;
+    } catch (error) {
+        console.log('Une erreur est survenue en filtrant les maisons par prix', error);
+        return [];
+    }
+}
+
 export async function getImageUrl(record, recordImage) {
     return db.files.getURL(record, recordImage);
 }

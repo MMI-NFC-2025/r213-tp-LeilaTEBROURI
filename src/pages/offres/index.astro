@@ -3,12 +3,76 @@ import "../../styles/global.css";
 import Layout from "../../layouts/Layout.astro";
 import Card from "../../components/Card.astro";
 
-import { getOffres } from "../../js/backend.mjs";
-const offres = await getOffres();
+import { filterByPrix, getOffres } from "../../js/backend.mjs";
+
+let message = "";
+let Offres = [];
+
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    const minPrix = parseInt((data.get("minPrix") || "").toString());
+    const maxPrix = parseInt((data.get("maxPrix") || "").toString());
+
+    if (minPrix > 0 && maxPrix > 0 && maxPrix > minPrix) {
+        Offres = await filterByPrix(minPrix, maxPrix);
+        if (Offres.length === 0) {
+            message = `Pas d'offres entre ${minPrix}€ et ${maxPrix}€`;
+        } else {
+            message = `Liste des offres entre ${minPrix}€ et ${maxPrix}€`;
+        }
+    } else {
+        message = "Veuillez entrer des valeurs valides pour le prix.";
+        Offres = await getOffres();
+    }
+} else {
+    Offres = await getOffres();
+}
 ---
 
 <Layout titre="Offres">
     <h1>Offres</h1>
+
+    <a
+        href="/offres/add"
+        class="inline-block mb-4 bg-fuchsia-100 hover:bg-fuchsia-200 rounded-lg text-black p-2 border border-black transition-colors"
+    >
+        Ajouter une offre
+    </a>
+
+    <form
+        id="price-form"
+        action={Astro.url.pathname}
+        method="POST"
+        class="mb-4 flex flex-wrap gap-2 rounded-xl border border-gray-200 bg-slate-50 p-3"
+    >
+        <input
+            type="number"
+            name="minPrix"
+            placeholder="Prix minimum"
+            min="1"
+            max="10000000"
+            step="1000"
+            required
+            class="min-w-45 rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        />
+        <input
+            type="number"
+            name="maxPrix"
+            placeholder="Prix maximum"
+            min="1"
+            max="10000000"
+            step="1000"
+            required
+            class="min-w-45 rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        />
+        <input
+            type="submit"
+            value="Filtrer par prix"
+            class="bg-fuchsia-100 hover:bg-fuchsia-200 rounded-lg text-black p-2 border border-black transition-colors cursor-pointer"
+        />
+    </form>
+
+    {message && <p class="mb-4">{message}</p>}
 
     <div class="filters mb-6 flex flex-wrap gap-2">
         <button
@@ -39,9 +103,9 @@ const offres = await getOffres();
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
-            offres.map((offre) => (
+            Offres.map((offre) => (
                 <div
-                    class="offre bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    class={`offre rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border ${offre.favori ? "bg-emerald-50 border-emerald-500" : "bg-white border-gray-200"}`}
                     data-favori={offre.favori ? "true" : "false"}
                 >
                     <Card offre={offre} />
@@ -51,19 +115,27 @@ const offres = await getOffres();
     </div>
 </Layout>
 
-<style>
-    .offre {
-        border: 1px solid #e5e7eb;
-    }
-
-    .offre[data-favori="true"] {
-        border-color: #10b981;
-        background-color: #ecfdf5;
-    }
-</style>
-
 <script>
     //@ts-nocheck
+    const priceForm = document.getElementById("price-form");
+    const minPrixInput = document.querySelector('input[name="minPrix"]');
+    const maxPrixInput = document.querySelector('input[name="maxPrix"]');
+
+    priceForm?.addEventListener("submit", (event) => {
+        const min = Number(minPrixInput?.value);
+        const max = Number(maxPrixInput?.value);
+
+        if (max <= min) {
+            event.preventDefault();
+            maxPrixInput?.setCustomValidity(
+                "Le prix maximum doit être plus grand que le prix minimum.",
+            );
+            maxPrixInput?.reportValidity();
+        } else {
+            maxPrixInput?.setCustomValidity("");
+        }
+    });
+
     const button = document.getElementById("favori-button");
     let showOnlyFavorites = false;
 
