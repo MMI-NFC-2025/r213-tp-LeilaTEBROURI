@@ -1,0 +1,98 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { addOffre } from "../../js/backend.mjs";
+
+let pbMessage = "";
+
+if (Astro.request.method === "POST") {
+    const formData = await Astro.request.formData();
+    console.log(formData);
+
+    const prix = Number(formData.get("prix"));
+    const surface = Number(formData.get("surface"));
+
+    if (prix <= 0 || surface <= 0) {
+        pbMessage = "Le prix et la surface doivent être supérieurs à 0";
+    } else {
+        const result = await addOffre(formData);
+        pbMessage = result.message;
+    }
+} else {
+    console.log("GET request");
+}
+---
+
+<Layout titre="Ajouter une offre">
+    <h1 class="text-lg">Ajouter une offre</h1>
+
+    {pbMessage && <p class="mt-2 text-green-600">{pbMessage}</p>}
+
+    <form
+        action="/offres/add"
+        method="POST"
+        enctype="multipart/form-data"
+        class="space-y-2"
+    >
+        <input
+            type="text"
+            name="nom_maison"
+            placeholder="Nom de la maison"
+            required
+            class="w-full mt-2 p-2 border border-gray-300 rounded-md"
+        />
+
+        <input
+            type="number"
+            name="prix"
+            placeholder="Prix"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+        />
+
+        <input
+            type="number"
+            name="nombre_de_salle_de_bain"
+            placeholder="Nombre de salles de bain"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+        />
+
+        <input
+            type="number"
+            name="nombre_de_chambre"
+            placeholder="Nombre de chambres"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+        />
+
+        <input
+            type="number"
+            name="surface"
+            placeholder="Superficie"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+        />
+
+        <input
+            type="text"
+            name="adresse"
+            placeholder="Adresse"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+        />
+
+        <label class="flex items-center gap-2">
+            <input type="checkbox" name="favori" />
+            Favori
+        </label>
+
+        <input type="file" name="image" multiple class="w-full" />
+
+        <button
+            type="submit"
+            class="bg-fuchsia-100 hover:bg-fuchsia-200 rounded-lg text-black p-2 border border-black transition-colors"
+        >
+            Ajouter
+        </button>
+    </form>
+</Layout>
