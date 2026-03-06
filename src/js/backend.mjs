@@ -147,9 +147,5 @@ export async function getAgents() {
 
 export async function getOffresByAgent(agentId) {
     const offres = await getOffres();
-    const target = normalizeAgent(decodeURIComponent(agentId || ""));
-
-    return offres.filter((offre) => {
-        return normalizeAgent(offre?.agent) === target;
-    });
+    return offres.filter((offre) => offre.agent === agentId);
 }
