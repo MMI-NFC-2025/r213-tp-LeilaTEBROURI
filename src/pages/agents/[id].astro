@@ -1,0 +1,40 @@
+---
+import "../../styles/global.css";
+import Layout from "../../layouts/Layout.astro";
+import Card from "../../components/Card.astro";
+
+import { getAgents, getOffresByAgent } from "../../js/backend.mjs";
+
+const { id } = Astro.params;
+const offres = await getOffresByAgent(id);
+const agents = await getAgents();
+
+if (offres.length === 0) {
+    return Astro.redirect("/agents");
+}
+
+const agent = agents.find((item) => item.id === id);
+const agentName = agent?.name || id;
+---
+
+<Layout titre={`Offres de ${agentName}`}>
+    <h1>Offres de {agentName}</h1>
+    <p class="text-gray-600 mb-4">{offres.length} offre(s) trouvée(s)</p>
+
+    <a
+        href="/agents"
+        class="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg mb-6 inline-block ml-6"
+    >
+        ← Retour à la liste des agents
+    </a>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+            offres.map((offre) => (
+                <div class="offre bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-200">
+                    <Card offre={offre} />
+                </div>
+            ))
+        }
+    </div>
+</Layout>

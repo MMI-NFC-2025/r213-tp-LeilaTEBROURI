@@ -1,8 +1,194 @@
 ---
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
+import { getAgents, getOffres } from "../js/backend.mjs";
+
+const offres = await getOffres();
+const agents = await getAgents();
+
+const totalOffres = offres.length;
+const totalAgents = agents.length;
+const totalFavoris = offres.filter((offre) => offre.favori).length;
+const favoriteOffres = offres.filter((offre) => offre.favori);
+const latestOffres = offres.slice(0, 3);
 ---
 
 <Layout titre="Accueil">
-	<h1>Accueil</h1>
+	<section class="max-w-6xl mx-auto px-4 py-10">
+		<div class="rounded-2xl border border-black bg-fuchsia-100 p-8 md:p-12">
+			<p
+				class="text-sm font-semibold uppercase tracking-wide text-gray-700 mb-3"
+			>
+				Agence immobilière
+			</p>
+			<h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4">
+				Trouvez la maison idéale en quelques clics
+			</h1>
+			<p class="text-gray-700 text-base md:text-lg max-w-3xl">
+				Consultez les offres, explorez les agents et gérez vos maisons
+				favorites depuis une seule interface simple.
+			</p>
+
+			<div class="mt-6 flex flex-wrap gap-3">
+				<a
+					href="/offres"
+					class="bg-black text-white px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+				>
+					Voir les offres
+				</a>
+				<a
+					href="/agents"
+					class="bg-white text-black border border-black px-5 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+				>
+					Découvrir les agents
+				</a>
+				<a
+					href="/offres/add"
+					class="bg-fuchsia-200 text-black border border-black px-5 py-2 rounded-lg hover:bg-fuchsia-300 transition-colors"
+				>
+					Ajouter une offre
+				</a>
+			</div>
+		</div>
+
+		<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+			<article class="rounded-xl border border-gray-300 bg-white p-5">
+				<p class="text-sm text-gray-500">Offres disponibles</p>
+				<p class="text-3xl font-bold mt-1">{totalOffres}</p>
+			</article>
+			<article class="rounded-xl border border-gray-300 bg-white p-5">
+				<p class="text-sm text-gray-500">Agents actifs</p>
+				<p class="text-3xl font-bold mt-1">{totalAgents}</p>
+			</article>
+			<article class="rounded-xl border border-gray-300 bg-white p-5">
+				<p class="text-sm text-gray-500">Maisons favorites</p>
+				<p class="text-3xl font-bold mt-1">{totalFavoris}</p>
+			</article>
+		</div>
+
+		<div class="mt-10">
+			<div class="flex items-center justify-between mb-4">
+				<h2 class="text-2xl font-bold">Maisons favorites</h2>
+				<a href="/offres" class="text-sm underline"
+					>Voir toutes les offres</a
+				>
+			</div>
+
+			{
+				favoriteOffres.length === 0 ? (
+					<p class="text-gray-600">
+						Aucune maison favorite pour le moment.
+					</p>
+				) : (
+					<div class="relative">
+						<button
+							type="button"
+							id="favorites-prev"
+							class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-black rounded-lg px-3 py-1 shadow"
+						>
+							←
+						</button>
+
+						<div
+							id="favorites-carousel"
+							class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 px-10"
+						>
+							{favoriteOffres.map((offre) => (
+								<article class="min-w-70 md:min-w-80 snap-start rounded-xl border border-gray-300 bg-white p-5">
+									<h3 class="font-semibold text-lg">
+										{offre.nom_maison}
+									</h3>
+									<p class="text-sm text-gray-600 mt-1">
+										{offre.adresse}
+									</p>
+									<p class="mt-3 font-semibold">
+										{offre.prix} €
+									</p>
+									<p class="text-sm text-gray-600">
+										{offre.surface} m²
+									</p>
+									<a
+										href={`/offres/${offre.id}`}
+										class="inline-block mt-4 bg-fuchsia-100 hover:bg-fuchsia-200 rounded-lg text-black px-3 py-1 border border-black transition-colors"
+									>
+										Voir plus
+									</a>
+								</article>
+							))}
+						</div>
+
+						<button
+							type="button"
+							id="favorites-next"
+							class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-black rounded-lg px-3 py-1 shadow"
+						>
+							→
+						</button>
+					</div>
+				)
+			}
+		</div>
+
+		<div class="mt-10">
+			<div class="flex items-center justify-between mb-4">
+				<h2 class="text-2xl font-bold">Dernières offres</h2>
+				<a href="/offres" class="text-sm underline">Tout voir</a>
+			</div>
+
+			{
+				latestOffres.length === 0 ? (
+					<p class="text-gray-600">
+						Aucune offre disponible pour le moment.
+					</p>
+				) : (
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+						{latestOffres.map((offre) => (
+							<article class="rounded-xl border border-gray-300 bg-white p-5">
+								<h3 class="font-semibold text-lg">
+									{offre.nom_maison}
+								</h3>
+								<p class="text-sm text-gray-600 mt-1">
+									{offre.adresse}
+								</p>
+								<p class="mt-3 font-semibold">{offre.prix} €</p>
+								<p class="text-sm text-gray-600">
+									{offre.surface} m²
+								</p>
+								<a
+									href={`/offres/${offre.id}`}
+									class="inline-block mt-4 bg-fuchsia-100 hover:bg-fuchsia-200 rounded-lg text-black px-3 py-1 border border-black transition-colors"
+								>
+									Voir plus
+								</a>
+							</article>
+						))}
+					</div>
+				)
+			}
+		</div>
+	</section>
 </Layout>
+
+<script>
+	const favoritesCarousel = document.getElementById("favorites-carousel");
+	const favoritesPrev = document.getElementById("favorites-prev");
+	const favoritesNext = document.getElementById("favorites-next");
+
+	if (favoritesCarousel && favoritesPrev && favoritesNext) {
+		const scrollStep = () => favoritesCarousel.clientWidth * 0.85;
+
+		favoritesPrev.addEventListener("click", () => {
+			favoritesCarousel.scrollBy({
+				left: -scrollStep(),
+				behavior: "smooth",
+			});
+		});
+
+		favoritesNext.addEventListener("click", () => {
+			favoritesCarousel.scrollBy({
+				left: scrollStep(),
+				behavior: "smooth",
+			});
+		});
+	}
+</script>

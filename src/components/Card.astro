@@ -7,7 +7,59 @@ console.log(offre);
 <div
     class="border border-black rounded-lg overflow-hidden shadow-lg mb-6 mr-20 ml-20 flex flex-col items-center bg-fuchsia-100 p-6"
 >
-    <PbImage record={offre} recordImage={offre.image[0]} />
+    <div class="relative">
+        <PbImage record={offre} recordImage={offre.image[0]} />
+    </div>
     <h2 class="text-xl font-bold mt-4">{offre.nom_maison}</h2>
-    <a href={`/offres/${offre.id}`}>Voir plus</a>
+    <div class="flex items-center gap-3 mt-2">
+        <a href={`/offres/${offre.id}`}>Voir plus</a>
+        <button
+            type="button"
+            data-favori-button
+            data-offre={JSON.stringify(offre)}
+            aria-pressed={offre.favori ? "true" : "false"}
+            class="favoriteButton cursor-pointer"
+        >
+            <img
+                id="favorite-icon"
+                src={offre.favori ? "/favorite_filled.png" : "/favorite.png"}
+                alt="Favori"
+                class={`w-50 h-40 transition-all ${offre.favori ? "opacity-100 scale-110" : "opacity-50 scale-100"}`}
+            />
+        </button>
+    </div>
 </div>
+
+<script>
+    //@ts-nocheck
+    import { setFavori } from "../js/backend.mjs";
+    const favoriteButtons = document.querySelectorAll(".favoriteButton");
+
+    favoriteButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+            const offreData = JSON.parse(button.dataset.offre || "{}");
+            const newFavori = !offreData.favori;
+
+            try {
+                await setFavori(offreData);
+            } catch (error) {
+                console.error("Erreur lors de la mise à jour favori", error);
+            }
+
+            const favIcon = button.querySelector("img");
+            if (favIcon) {
+                favIcon.src = newFavori
+                    ? "/favorite_filled.png"
+                    : "/favorite.png";
+                favIcon.classList.toggle("opacity-50", !newFavori);
+                favIcon.classList.toggle("opacity-100", newFavori);
+                favIcon.classList.toggle("scale-100", !newFavori);
+                favIcon.classList.toggle("scale-110", newFavori);
+            }
+
+            button.setAttribute("aria-pressed", String(newFavori));
+            offreData.favori = newFavori;
+            button.dataset.offre = JSON.stringify(offreData);
+        });
+    });
+</script>

@@ -1,0 +1,54 @@
+---
+import "../../styles/global.css";
+import Layout from "../../layouts/Layout.astro";
+
+import { getAgentInfo, getAgents, getOffres } from "../../js/backend.mjs";
+
+const agents = await getAgents();
+const offres = await getOffres();
+
+const offersByAgentId = new Map();
+for (const offre of offres) {
+    const agent = getAgentInfo(offre);
+    if (!agent) {
+        continue;
+    }
+
+    offersByAgentId.set(agent.id, (offersByAgentId.get(agent.id) || 0) + 1);
+}
+---
+
+<Layout titre="Agents">
+    <h1>Liste des agents</h1>
+    <p class="text-gray-600 mb-4">{agents.length} agent(s) trouvé(s)</p>
+
+    <a
+        href="/offres"
+        class="bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg mb-6 inline-block"
+    >
+        ← Retour aux offres
+    </a>
+
+    {
+        agents.length === 0 ? (
+            <p>Aucun agent disponible.</p>
+        ) : (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {
+                    agents.map((agent) => (
+                        <a
+                            href={`/agents/${encodeURIComponent(agent.id)}`}
+                            class="block rounded-lg border border-black bg-fuchsia-100 p-4 hover:bg-fuchsia-200 transition-colors"
+                        >
+                            <h2 class="text-lg font-semibold">{agent.name}</h2>
+                            <p class="text-gray-700 mt-1">
+                                {offersByAgentId.get(agent.id) || 0} offre(s)
+                            </p>
+                            <p class="text-sm text-gray-500 mt-2">Voir les offres →</p>
+                        </a>
+                    ))
+                }
+            </div>
+        )
+    }
+</Layout>
