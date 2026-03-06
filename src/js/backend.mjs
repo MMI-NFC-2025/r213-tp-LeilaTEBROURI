@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 
-const db = new PocketBase("http://127.0.0.1:8090/");
+const db = new PocketBase("https://agence.tebrouri.fr/_/");
 const maisonCollection = db.collection("Maison");
 
 const normalizeAgent = (value) => value?.toString().trim().toLowerCase() || "";
